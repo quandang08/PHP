@@ -47,11 +47,32 @@ class Product_Database
     }
 
     // Cập nhật sản phẩm
-    public function editProduct($id, $name, $price, $category_id)
+    public function updateProduct($id, $name, $desc, $price, $category_id, $image = null)
     {
-        $stmt = $this->db->prepare("UPDATE Products SET name = ?, price = ?, category_id = ? WHERE id = ?");
-        $stmt->bind_param("sdii", $name, $price, $category_id, $id);
-        return $stmt->execute();
+        // Tạo truy vấn SQL
+        $query = "UPDATE Products SET name = ?, `desc` = ?, price = ?, category_id = ?";
+        if ($image) {
+            $query .= ", image = ?"; // Thêm cập nhật hình ảnh nếu có
+        }
+        $query .= " WHERE id = ?";
+
+        $stmt = $this->db->prepare($query);
+
+        // Xử lý tham số dựa trên việc có hình ảnh hay không
+        if ($image) {
+            $stmt->bind_param("ssdssi", $name, $desc, $price, $category_id, $image, $id);
+        } else {
+            $stmt->bind_param("ssdsi", $name, $desc, $price, $category_id, $id);
+        }
+
+        // Thực thi câu lệnh và trả về kết quả
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            // Ghi log nếu có lỗi
+            error_log("Error executing update query: " . $stmt->error);
+            return false;
+        }
     }
 
     // Tìm kiếm sản phẩm theo tên
