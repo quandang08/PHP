@@ -39,13 +39,12 @@ class Product_Database
     }
 
     // Thêm sản phẩm mới
-    public function addProduct($name, $desc, $price, $image, $category_id)
+    public function addProduct($name, $desc, $price, $category_id, $image = null)
     {
-        $stmt = $this->db->prepare("INSERT INTO Products (name, `desc`, price, image, category_id) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssdsi", $name, $desc, $price, $image, $category_id);
+        $stmt = $this->db->prepare("INSERT INTO Products (name, `desc`, price, category_id, image) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssdis", $name, $desc, $price, $category_id, $image);
         return $stmt->execute();
     }
-
 
     // Cập nhật sản phẩm
     public function editProduct($id, $name, $price, $category_id)

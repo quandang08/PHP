@@ -27,8 +27,10 @@ $products = $product_database->getAllProducts();
                 <tr>
                     <th>ID</th>
                     <th>Tên sản phẩm</th>
+                    <th>Mô tả</th>
                     <th>Giá</th>
                     <th>Danh mục</th>
+                    <th>Hình ảnh</th>
                     <th>Thao tác</th>
                 </tr>
             </thead>
@@ -37,8 +39,28 @@ $products = $product_database->getAllProducts();
                 <tr>
                     <td><?= htmlspecialchars($product['id']); ?></td>
                     <td><?= htmlspecialchars($product['name']); ?></td>
-                    <td><?= htmlspecialchars($product['price']); ?></td>
-                    <td><?= htmlspecialchars($product['category_id']); ?></td>
+                    <td><?= htmlspecialchars($product['desc']); ?></td>
+                    <td><?= htmlspecialchars($product['price']); ?> VNĐ</td>
+                    <td>
+                        <?php
+                        // Tìm danh mục của sản phẩm
+                        $category_name = '';
+                        foreach ($categories as $category) {
+                            if ($category['id'] == $product['category_id']) {
+                                $category_name = $category['name'];
+                                break;
+                            }
+                        }
+                        echo htmlspecialchars($category_name);
+                        ?>
+                    </td>
+                    <td>
+                        <?php if ($product['image']): ?>
+                            <img src="uploads/<?= htmlspecialchars($product['image']); ?>" alt="Product Image" width="100">
+                        <?php else: ?>
+                            <p>Chưa có hình ảnh</p>
+                        <?php endif; ?>
+                    </td>
                     <td>
                         <a href="edit_product.php?action=edit&id=<?= $product['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
                         <a href="product_process.php?action=delete&id=<?= $product['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Delete</a>
