@@ -1,7 +1,6 @@
 <?php
 session_start(); // Bắt đầu session để lấy thông báo
 
-
 if (isset($_SESSION['message'])): ?>
     <div class="alert alert-<?= $_SESSION['message_type']; ?> alert-dismissible fade show" role="alert">
         <?= $_SESSION['message']; ?>
