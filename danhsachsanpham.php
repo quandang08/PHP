@@ -6,7 +6,12 @@ $product_Database = new Product_Database();
 $category_Database = new Category_Database();
 
 $categories = $category_Database->getAllCategories();
-$keyword = htmlspecialchars(filter_input(INPUT_GET, 'param'), ENT_QUOTES, 'UTF-8');
+
+$keyword = htmlspecialchars(filter_input(INPUT_GET, 'keyword'), ENT_QUOTES, 'UTF-8');
+if (!empty($keyword)) {
+    $products = $product_Database->searchProductsByKeyword($keyword);
+}
+
 $category_id = filter_input(INPUT_GET, 'category_id', FILTER_VALIDATE_INT);
 
 if ($category_id) {
@@ -86,7 +91,7 @@ if ($category_id) {
                             <img src="uploads/<?= htmlspecialchars($product['image'] ?? 'no_image.png'); ?>" class="card-img-top" alt="Product Image">
                             <div class="card-body">
                                 <h5 class="card-title"><?= htmlspecialchars($product['name']); ?></h5>
-                                <p class="card-text"><?= number_format($product['price'], 0, ',', '.'); ?> VND</p>
+                                <p class="card-text"><?= number_format((float)str_replace('.', '', $product['price']), 0, ',', '.'); ?> VND</p>
                                 <a href="product_detail.php?id=<?= $product['id']; ?>" class="btn btn-primary">Xem chi tiết</a>
                             </div>
                         </div>
@@ -99,3 +104,4 @@ if ($category_id) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </html>
+
