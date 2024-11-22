@@ -80,7 +80,11 @@ $products = $product_database->getAllProducts();
                         </td>
                         <td>
                             <a href="edit_product.php?action=edit&id=<?= $product['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
-                            <a href="product_process.php?action=delete&id=<?= $product['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Delete</a>
+                            <a href="product_process.php?action=delete&id=<?= $product['id']; ?>"
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?');">
+                                Delete
+                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

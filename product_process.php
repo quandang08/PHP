@@ -13,16 +13,25 @@ if (!isset($_GET["action"])) {
 $action = $_GET["action"];
 
 if ($action == "delete" && isset($_GET["id"])) {
-    $id = $_GET["id"];
+    $id = intval($_GET["id"]); // Đảm bảo id là số nguyên
+
     if (filter_var($id, FILTER_VALIDATE_INT)) {
-        $product_database->deleteProduct($id);
+        $success = $product_database->deleteProduct($id);
+        if ($success) {
+            $_SESSION['message'] = "Sản phẩm đã được xóa thành công!";
+            $_SESSION['message_type'] = "success";
+        } else {
+            $_SESSION['message'] = "Có lỗi xảy ra khi xóa sản phẩm!";
+            $_SESSION['message_type'] = "danger";
+        }
     }
+
 } elseif ($action == "add" && isset($_POST["name"], $_POST["desc"], $_POST["price"], $_POST["category_id"])) {
     $name = $_POST["name"];
     $desc = $_POST["desc"]; // Lấy mô tả
     $price = $_POST["price"];
     $category_id = $_POST["category_id"];
-    
+
     // Xử lý upload hình ảnh
     $image = null;
     if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
@@ -52,7 +61,6 @@ if ($action == "delete" && isset($_GET["id"])) {
         $_SESSION['message'] = "Có lỗi xảy ra khi thêm sản phẩm!";
         $_SESSION['message_type'] = "danger";
     }
-
 } elseif ($action == "edit" && isset($_POST["id"], $_POST["name"], $_POST["desc"], $_POST["price"], $_POST["category_id"])) {
     $id = $_POST["id"];
     $name = $_POST["name"];
