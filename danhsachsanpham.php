@@ -47,6 +47,7 @@ $total_pages = ceil($total_products / $items_per_page);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách sản phẩm</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="/public/style.css">
 </head>
 <style>
@@ -73,6 +74,7 @@ $total_pages = ceil($total_products / $items_per_page);
 
 <body>
     <div class="container-fluid">
+        <!-- Header -->
         <!-- Header Wrapper -->
         <header id="main-header">
             <!-- Above Header -->
@@ -112,7 +114,7 @@ $total_pages = ceil($total_products / $items_per_page);
                         <!-- Search Section -->
                         <div class="col-md-4 text-center">
                             <form role="search" method="get" class="d-flex">
-                                <input type="search" class="form-control me-2" placeholder="Search product..." name="s">
+                                <input type="search" class="form-control me-2" placeholder="Search product..." name="keyword" value="<?= htmlspecialchars($keyword ?? ''); ?>">
                                 <button type="submit" class="btn btn-outline-light">
                                     <i class="bi bi-search"></i>
                                 </button>
@@ -122,14 +124,14 @@ $total_pages = ceil($total_products / $items_per_page);
                         <div class="col-md-4 text-end">
                             <div class="d-inline-flex align-items-center">
                                 <!-- Cart -->
-                                <a href="/cart" class="text-white me-3 d-flex align-items-center">
-                                    <i class="bi bi-cart4 fs-5"></i>
-                                    <span class="ms-2">Cart</span>
+                                <a href="/cart" class="text-white me-4 d-flex align-items-center">
+                                    <i class="bi bi-cart4 fs-4 me-2"></i> <!-- Tăng size icon và thêm khoảng cách -->
+                                    <span class="d-none d-sm-inline">Cart</span> <!-- Chỉ hiển thị chữ "Cart" trên màn hình lớn hơn -->
                                 </a>
                                 <!-- Login -->
                                 <a href="/login" class="text-white d-flex align-items-center">
-                                    <i class="bi bi-person fs-5"></i>
-                                    <span class="ms-2">Log In</span>
+                                    <i class="bi bi-person fs-4 me-2"></i> <!-- Tăng size icon và thêm khoảng cách -->
+                                    <span class="d-none d-sm-inline">Log In</span> <!-- Chỉ hiển thị chữ "Log In" trên màn hình lớn hơn -->
                                 </a>
                             </div>
                         </div>
@@ -141,11 +143,18 @@ $total_pages = ceil($total_products / $items_per_page);
             <nav class="below-header bg-primary py-2">
                 <div class="container d-flex justify-content-center">
                     <ul class="nav">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link text-white">All products</a>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle text-white" id="navbarDropdownAllProducts" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                All products
+                            </a>
+                            <ul class="dropdown-menu">
+                                <?php foreach ($categories as $category): ?>
+                                    <li><a class="dropdown-item" href="?category_id=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a></li>
+                                <?php endforeach; ?>
+                            </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link text-white">Home appliances</a>
+                            <a href="danhsachsanpham.php" class="nav-link text-white">Home appliances</a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link text-white">Audio & Video</a>
@@ -166,33 +175,7 @@ $total_pages = ceil($total_products / $items_per_page);
                 </div>
             </nav>
         </header>
-
-
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container">
-                <a class="navbar-brand" href="#">Logo</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" href="danhsachsanpham.php">Home</a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">Shop</a>
-                            <ul class="dropdown-menu">
-                                <?php foreach ($categories as $category): ?>
-                                    <li><a class="dropdown-item" href="?category_id=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a></li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </li>
-                    </ul>
-                    <form class="d-flex" method="GET">
-                        <input class="form-control me-2" type="search" name="keyword" placeholder="Tìm kiếm" value="<?= htmlspecialchars($keyword ?? ''); ?>">
-                        <button class="btn btn-outline-success" type="submit">Tìm</button>
-                    </form>
-                </div>
-            </div>
-        </nav>
+        <!-- End Header  -->
 
         <div class="container mt-4">
             <?php if ($category_id): ?>
