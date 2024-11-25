@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+
+*{
+    font-family: "Roboto", sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    margin-bottom: 1rem;
+}
+
+.product-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.product-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.pagination .page-link {
+    color: #007bff;
+}
+
+.pagination .page-link:hover {
+    color: #0056b3;
+}
+
+.product-row {
+    gap: 1.5rem;
+}
+
+.nav .nav-link {
+    padding: 0 10px;
+    font-weight: 500;
+}
+.nav .nav-link:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
+form .form-control {
+    max-width: 250px;
+}
+section.above-header {
+    background-color: #0769DA; 
+    padding: 20px 0;
+}
+
+/* Custom Footer Styling */
+.custom-footer {
+    background-color: #f8f9fa;
+    padding: 40px 0;
+    font-family: Arial, sans-serif;
+}
+
+.footer-top {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 30px;
+}
+
+.footer-section {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.footer-logo img {
+    width: 150px;
+}
+
+.footer-links {
+    flex: 1;
+    padding: 0 20px;
+}
+
+.footer-links h5 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.footer-links ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.footer-links ul li {
+    margin-bottom: 10px;
+}
+
+.footer-links ul li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+}
+
+.footer-links ul li a:hover {
+    color: #007bff;
+}
+
+.footer-contact {
+    flex: 1;
+    padding: 0 20px;
+}
+
+.footer-contact h5 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.footer-contact ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.footer-contact ul li {
+    margin-bottom: 10px;
+}
+
+.footer-contact ul li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+}
+
+.footer-contact ul li a:hover {
+    color: #007bff;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.footer-bottom p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.footer-payment-icons img {
+    width: 150px;
+    margin-top: 10px;
+}
