@@ -7,21 +7,37 @@ $category_Database = new Category_Database();
 
 $categories = $category_Database->getAllCategories();
 
-$keyword = htmlspecialchars(filter_input(INPUT_GET, 'keyword'), ENT_QUOTES, 'UTF-8');
-if (!empty($keyword)) {
-    $products = $product_Database->searchProductsByKeyword($keyword);
-}
+// Lọc đầu vào từ GET
+$keyword = filter_input(INPUT_GET, 'keyword', FILTER_SANITIZE_STRING);
+$keyword = $keyword ? htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8') : null;
 
 $category_id = filter_input(INPUT_GET, 'category_id', FILTER_VALIDATE_INT);
+$category_id = ($category_id && $category_id > 0) ? $category_id : null; // Kiểm tra category_id hợp lệ
 
-if ($category_id) {
-    $products = $product_Database->getProductsByCategory($category_id);
-} elseif ($keyword) {
-    $products = $product_Database->searchProductsByKeyword($keyword);
+// Thiết lập phân trang
+$items_per_page = 6;
+$page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
+$page = ($page && $page > 0) ? $page : 1;
+$offset = ($page - 1) * $items_per_page;
+
+// Gọi phương thức để lấy danh sách sản phẩm và tổng số sản phẩm
+$productsData = $product_Database->getProducts($category_id, $keyword, $offset, $items_per_page);
+$total_products = $product_Database->getTotalProductsCount($category_id, $keyword);
+
+// Kiểm tra xem $productsData có phải là mảng không và có dữ liệu không
+if (is_array($productsData) && count($productsData) > 0) {
+    $products = $productsData; // Lấy danh sách sản phẩm
 } else {
-    $products = $product_Database->getAllProducts();
+    // Xử lý khi không có dữ liệu hoặc có lỗi
+    $products = []; // Gán mảng rỗng nếu không có dữ liệu
 }
+
+// Tính toán số trang
+$total_pages = ceil($total_products / $items_per_page);
+
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -34,9 +50,9 @@ if ($category_id) {
 </head>
 <style>
     .product-card img {
-        width: 100%; 
-        height: 200px; 
-        object-fit: cover; 
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
     }
 </style>
 
@@ -49,7 +65,7 @@ if ($category_id) {
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link active" href="http://localhost:81/Tuan7_BE1_dangquan/Tuan7_dangquan/BaiTap_BE1_dangquan/danhsachsanpham.php">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="danhsachsanpham.php">Home</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">Danh mục</a>
                         <ul class="dropdown-menu">
@@ -68,13 +84,13 @@ if ($category_id) {
     </nav>
 
     <div class="container mt-4">
-        <?php if (isset($_SESSION['message'])): ?>
-            <div class="alert alert-<?= $_SESSION['message_type']; ?>"><?= $_SESSION['message']; ?></div>
-            <?php unset($_SESSION['message'], $_SESSION['message_type']); ?>
-        <?php endif; ?>
-
         <?php if ($category_id): ?>
-            <h2>Sản phẩm thuộc danh mục: <?= htmlspecialchars($category_Database->getCategoryById($category_id)['name']); ?></h2>
+            <?php $category = $category_Database->getCategoryById($category_id); ?>
+            <?php if ($category): ?>
+                <h2>Sản phẩm thuộc danh mục: <?= htmlspecialchars($category['name']); ?></h2>
+            <?php else: ?>
+                <h2>Danh mục không tồn tại.</h2>
+            <?php endif; ?>
         <?php elseif ($keyword): ?>
             <h2>Kết quả tìm kiếm cho: "<?= htmlspecialchars($keyword); ?>"</h2>
         <?php else: ?>
@@ -88,10 +104,10 @@ if ($category_id) {
                 <?php foreach ($products as $product): ?>
                     <div class="col-md-4 mb-4">
                         <div class="card product-card">
-                            <img src="uploads/<?= htmlspecialchars($product['image'] ?? 'no_image.png'); ?>" class="card-img-top" alt="Product Image">
+                            <img src="<?= file_exists("uploads/" . $product['image']) && $product['image'] ? "uploads/" . htmlspecialchars($product['image']) : "uploads/no_image.png"; ?>" class="card-img-top" alt="Product Image">
                             <div class="card-body">
                                 <h5 class="card-title"><?= htmlspecialchars($product['name']); ?></h5>
-                                <p class="card-text"><?= number_format((float)str_replace('.', '', $product['price']), 0, ',', '.'); ?> VND</p>
+                                <p class="card-text"><?= number_format((float)$product['price'], 0, ',', '.'); ?> VND</p>
                                 <a href="product_detail.php?id=<?= $product['id']; ?>" class="btn btn-primary">Xem chi tiết</a>
                             </div>
                         </div>
@@ -99,9 +115,35 @@ if ($category_id) {
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
+
+        <!-- Nút phân trang -->
+        <nav>
+            <ul class="pagination justify-content-center">
+                <?php if ($page > 1): ?>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<?= $page - 1; ?>&keyword=<?= urlencode($keyword ?? ''); ?>&category_id=<?= $category_id; ?>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <li class="page-item <?= ($i == $page) ? 'active' : ''; ?>">
+                        <a class="page-link" href="?page=<?= $i; ?>&keyword=<?= urlencode($keyword ?? ''); ?>&category_id=<?= $category_id; ?>"><?= $i; ?></a>
+                    </li>
+                <?php endfor; ?>
+
+                <?php if ($page < $total_pages): ?>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<?= $page + 1; ?>&keyword=<?= urlencode($keyword ?? ''); ?>&category_id=<?= $category_id; ?>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </nav>
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </html>
-
