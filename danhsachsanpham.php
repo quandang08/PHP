@@ -34,10 +34,7 @@ if (is_array($productsData) && count($productsData) > 0) {
 
 // Tính toán số trang
 $total_pages = ceil($total_products / $items_per_page);
-
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -202,13 +199,49 @@ $total_pages = ceil($total_products / $items_per_page);
                                 <div class="card-body">
                                     <h5 class="card-title"><?= htmlspecialchars($product['name']); ?></h5>
                                     <p class="card-text text-success fw-bold"><?= number_format((float)$product['price'], 0, ',', '.'); ?> VND</p>
-                                    <a href="product_detail.php?id=<?= $product['id']; ?>" class="btn btn-primary w-100">Xem chi tiết</a>
+                                    <a href="product_detail.php?id=<?= $product['id']; ?>" class="btn btn-primary w-100 mb-2">Xem chi tiết</a>
+                                    <!-- Add to Cart Button -->
+                                    <form action="add_to_cart.php" method="POST" class="d-inline" id="add-to-cart-form-<?= $product['id']; ?>">
+                                        <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="button" class="btn add-to-cart-btn w-100" onclick="addToCart(<?= $product['id']; ?>, '<?= htmlspecialchars($product['name']); ?>', <?= $product['price']; ?>)">
+                                            <i class="bi bi-cart-plus me-2"></i> Add to Cart
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
+
+            <!-- Modal for Cart Confirmation -->
+            <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="cartModalLabel">Product Added to Cart</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="cart-modal-body">
+                            <!-- Product image and details will appear here -->
+                            <div class="d-flex">
+                                <img src="your-product-image.jpg" class="img-thumbnail me-3" alt="Product Image" style="width: 80px; height: 80px;">
+                                <div>
+                                    <p><strong>Product Name</strong></p>
+                                    <p class="text-muted">Quantity: 1</p>
+                                    <p class="fw-bold">Price: 500,000 VND</p>
+                                </div>
+                            </div>
+                            <p>Your item has been successfully added to your cart.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="cart.php" class="btn btn-primary w-100">View Cart</a>
+                            <a href="checkout.php" class="btn btn-success w-100">Checkout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Nút phân trang -->
             <nav>
@@ -301,6 +334,19 @@ $total_pages = ceil($total_products / $items_per_page);
     </footer>
 
 </body>
+<script src="/public/script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    Swal.fire({
+        title: 'Product Added!',
+        text: 'Your product has been successfully added to the cart.',
+        icon: 'success',
+        confirmButtonText: 'Go to Cart'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'cart.php';
+        }
+    });
+</script>
 
 </html>
