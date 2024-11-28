@@ -121,14 +121,14 @@ $total_pages = ceil($total_products / $items_per_page);
                         <div class="col-md-4 text-end">
                             <div class="d-inline-flex align-items-center">
                                 <!-- Cart -->
-                                <a href="/cart" class="text-white me-4 d-flex align-items-center">
-                                    <i class="bi bi-cart4 fs-4 me-2"></i> <!-- Tăng size icon và thêm khoảng cách -->
-                                    <span class="d-none d-sm-inline">Cart</span> <!-- Chỉ hiển thị chữ "Cart" trên màn hình lớn hơn -->
+                                <a href="cart.php" class="text-white me-4 d-flex align-items-center">
+                                    <i class="bi bi-cart4 fs-4 me-2"></i> 
+                                    <span class="d-none d-sm-inline">Cart</span> 
                                 </a>
                                 <!-- Login -->
                                 <a href="/login" class="text-white d-flex align-items-center">
-                                    <i class="bi bi-person fs-4 me-2"></i> <!-- Tăng size icon và thêm khoảng cách -->
-                                    <span class="d-none d-sm-inline">Log In</span> <!-- Chỉ hiển thị chữ "Log In" trên màn hình lớn hơn -->
+                                    <i class="bi bi-person fs-4 me-2"></i>
+                                    <span class="d-none d-sm-inline">Log In</span> 
                                 </a>
                             </div>
                         </div>
