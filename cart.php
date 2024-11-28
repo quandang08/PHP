@@ -149,6 +149,9 @@
 </style>
 
 <body>
+    <!-- header  -->
+    <?php include "header.php" ?>
+    <!-- end header  -->
     <div class="cart-page">
         <h1>Cart</h1>
 
@@ -221,11 +224,11 @@
             </div>
         </div>
     </div>
+    <!-- footer  -->
+    <?php include "footer.php" ?>
+    <!-- end footer  -->
     <script src="/public/script.js"></script>
 </body>
-
-
-
 </html>
 
 <script>

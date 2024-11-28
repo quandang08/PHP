@@ -1,11 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Detail</title>
 </head>
+
 <style>
     /* Cấu hình chung cho phần container */
     .product-detail-container {
@@ -287,6 +288,10 @@
 </style>
 
 <body>
+    <!-- header  -->
+    <?php include "header.php" ?>
+    <!-- end header  -->
+
     <div class="product-detail-container">
         <!-- Phần trái: Hình ảnh sản phẩm -->
         <div class="product-main-image">
@@ -345,8 +350,10 @@
             </div>
         </div>
     </div>
+    <!-- footer  -->
+    <?php include "footer.php" ?>
+    <!-- end footer  -->
 </body>
-
 
 </html>
 <script>

@@ -1,3 +1,13 @@
+<?php
+require_once "Product_Database.php";
+require_once "Category_Database.php";
+
+$product_Database = new Product_Database();
+$category_Database = new Category_Database();
+
+$categories = $category_Database->getAllCategories();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -81,7 +91,7 @@
                                 <a href="cart.php" class="text-white me-4 d-flex align-items-center">
                                     <i class="bi bi-cart4 fs-4 me-2"></i> <span class="d-none d-sm-inline">Cart</span>
                                 </a>
-                                <a href="/login" class="text-white d-flex align-items-center">
+                                <a href="login.php" class="text-white d-flex align-items-center">
                                     <i class="bi bi-person fs-4 me-2"></i> <span class="d-none d-sm-inline">Log In</span>
                                 </a>
                             </div>
