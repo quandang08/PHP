@@ -17,7 +17,8 @@ $categories = $category_Database->getAllCategories();
     <title>Danh sách sản phẩm</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="/public/style.css">
+    <link rel="stylesheet" href="/public/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <style>
     body,
@@ -47,6 +48,186 @@ $categories = $category_Database->getAllCategories();
     }
 </style>
 
+<!-- Cart Drawer Css  -->
+<style>
+/* General styles for Cart Drawer */
+.cart-drawer {
+    font-family: "Roboto", serif;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+    z-index: 1050;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-drawer.active {
+    transform: translateX(0);
+}
+
+/* Header */
+.cart-drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.cart-drawer-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.cart-drawer-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Content */
+.cart-drawer-content {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+/* Cart Items */
+.cart-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.cart-item-img {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-btn,
+.quantity-input {
+    margin: 0;
+    padding: 0;
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ddd;
+    border: none;
+    cursor: pointer;
+}
+
+.quantity-input {
+    width: 40px;
+    height: 29px;
+    text-align: center;
+    border: 1px solid #ccc;
+    font-size: 14px;
+
+}
+
+.cart-item-price {
+    color: #333;
+    font-weight: bold;
+}
+
+.cart-item-remove {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: #ff5f5f;
+    cursor: pointer;
+}
+
+/* Cart Summary */
+.cart-summary {
+    padding: 15px;
+    border-top: 1px solid #e9ecef;
+    font-size: 1rem;
+}
+
+/* Actions */
+.cart-actions {
+    padding: 15px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cart-actions .btn {
+    text-align: center;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn-view-cart {
+    background-color: #0d0d0d;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+
+}
+
+.btn-view-cart:hover {
+    background-color: #0573f0;
+    color: #fff;
+}
+
+.btn-checkout {
+    background-color: #000e04;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-checkout:hover {
+    background-color: #0573f0;
+    color: #fff;
+}
+</style>
+<!-- End Cart Drawer Css  -->
 <body>
     <div class="container-fluid">
         <!-- Header -->
@@ -88,9 +269,11 @@ $categories = $category_Database->getAllCategories();
                         </div>
                         <div class="col-md-4 text-end">
                             <div class="d-inline-flex align-items-center">
-                                <a href="cart.php" class="text-white me-4 d-flex align-items-center">
-                                    <i class="bi bi-cart4 fs-4 me-2"></i> <span class="d-none d-sm-inline">Cart</span>
+                                <a href="#" id="open-cart-drawer" class="text-white me-4 d-flex align-items-center">
+                                    <i  class="bi bi-cart4 fs-4 me-2" style="cursor: pointer;"></i> 
+                                    <span  class="d-none d-sm-inline">Cart</span>
                                 </a>
+
                                 <a href="login.php" class="text-white d-flex align-items-center">
                                     <i class="bi bi-person fs-4 me-2"></i> <span class="d-none d-sm-inline">Log In</span>
                                 </a>

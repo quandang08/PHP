@@ -69,7 +69,8 @@ include "header.php"
                             <form action="add_to_cart.php" method="POST" class="d-inline" id="add-to-cart-form-<?= $product['id']; ?>">
                                 <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
                                 <input type="hidden" name="quantity" value="1">
-                                <button type="button" class="btn add-to-cart-btn w-100" onclick="addToCart(<?= $product['id']; ?>, '<?= htmlspecialchars($product['name']); ?>', <?= $product['price']; ?>)">
+                                <button type="button" class="btn add-to-cart-btn w-100"
+                                    onclick="addToCart(<?= $product['id']; ?>, '<?= htmlspecialchars($product['name']); ?>', <?= $product['price']; ?>)">
                                     <i class="bi bi-cart-plus me-2"></i> Add to Cart
                                 </button>
                             </form>
@@ -80,30 +81,36 @@ include "header.php"
         </div>
     <?php endif; ?>
 
-    <!-- Modal for Cart Confirmation -->
-    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cartModalLabel">Product Added to Cart</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="cart-modal-body">
-                    <!-- Product image and details will appear here -->
-                    <div class="d-flex">
-                        <img src="your-product-image.jpg" class="img-thumbnail me-3" alt="Product Image" style="width: 80px; height: 80px;">
-                        <div>
-                            <p><strong>Product Name</strong></p>
-                            <p class="text-muted">Quantity: 1</p>
-                            <p class="fw-bold">Price: 500,000 VND</p>
+    <!-- Modal for Cart Drawer -->
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-drawer-header">
+            <div class="cart-drawer-title">Shopping Cart</div>
+            <button type="button" class="cart-drawer-close" aria-label="Close Cart">
+                ✖
+            </button>
+        </div>
+        <div class="cart-drawer-content">
+            <ul class="cart-items">
+                <li class="cart-item">
+                    <img src="https://via.placeholder.com/50" alt="Product Name" class="cart-item-img">
+                    <div class="cart-item-info">
+                        <p class="cart-item-name">Product Name</p>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn minus">-</button>
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="quantity-btn plus">+</button>
                         </div>
+                        <p class="cart-item-price">309,000 VND</p>
                     </div>
-                    <p>Your item has been successfully added to your cart.</p>
-                </div>
-                <div class="modal-footer">
-                    <a href="cart.php" class="btn btn-primary w-100">View Cart</a>
-                    <a href="checkout.php" class="btn btn-success w-100">Checkout</a>
-                </div>
+                    <button class="cart-item-remove">✖</button>
+                </li>
+            </ul>
+            <div class="cart-summary">
+                <p><strong>Subtotal:</strong> <span class="cart-subtotal">309,000 VND</span></p>
+            </div>
+            <div class="cart-actions">
+                <a href="cart.php" class="btn btn-view-cart">View Cart</a>
+                <a href="checkout.php" class="btn btn-checkout">Checkout</a>
             </div>
         </div>
     </div>
@@ -135,22 +142,71 @@ include "header.php"
         </ul>
     </nav>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <?php
 // Include footer
 include "footer.php";
 ?>
 <script>
-    Swal.fire({
-        title: 'Product Added!',
-        text: 'Your product has been successfully added to the cart.',
-        icon: 'success',
-        confirmButtonText: 'Go to Cart'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = 'cart.php';
-        }
+    function addToCart(productId, productName, productPrice) {
+        // Dữ liệu gửi đến server
+        const data = {
+            product_id: productId,
+            product_name: productName,
+            product_price: productPrice,
+            quantity: 1, // Số lượng mặc định là 1
+            ajax: 'true' // Đánh dấu đây là yêu cầu AJAX
+        };
+
+        // Gửi yêu cầu đến cart.php bằng AJAX
+        fetch('cart.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams(data) // Gửi dữ liệu dưới dạng URL encoded
+            })
+            .then(response => response.json()) // Chuyển phản hồi thành JSON
+            .then(data => {
+                if (data.success) {
+                    // Hiển thị thông báo thành công với SweetAlert
+                    Swal.fire({
+                        title: 'Product Added!',
+                        text: 'Your product has been successfully added to the cart.',
+                        icon: 'success',
+                        confirmButtonText: 'Go to Cart'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = 'cart.php'; // Chuyển hướng đến giỏ hàng
+                        }
+                    });
+                } else {
+                    // Hiển thị thông báo lỗi
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.');
+            });
+    }
+</script>
+<script>
+    // Lấy các phần tử
+    const cartDrawer = document.getElementById('cart-drawer');
+    const closeBtn = document.querySelector('.cart-drawer-close');
+    const openCartDrawerBtn = document.querySelector('#open-cart-drawer'); // Nút mở cart drawer
+
+    // Hàm mở Cart Drawer
+    openCartDrawerBtn.addEventListener('click', () => {
+        cartDrawer.classList.add('active'); // Thêm class active để hiển thị
     });
+
+    // Hàm đóng Cart Drawer
+    closeBtn.addEventListener('click', () => {
+        cartDrawer.classList.remove('active'); // Xóa class active để ẩn đi
+    });
+
 </script>
 
 </html>

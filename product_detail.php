@@ -1,14 +1,30 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/public/product_detail.css">
     <title>Product Detail</title>
 </head>
 
 <style>
-    /* Cấu hình chung cho phần container */
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    /* Ẩn các nút tăng giảm mặc định */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+    /* Container chính */
     .product-detail-container {
         display: flex;
         justify-content: space-between;
@@ -21,7 +37,7 @@
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     }
 
-    /* Cột bên trái (Hình ảnh sản phẩm) */
+    /* Cột trái - Hình ảnh */
     .product-main-image {
         flex: 1;
         max-width: 600px;
@@ -36,12 +52,11 @@
         transition: transform 0.3s ease-in-out;
     }
 
-    /* Hiệu ứng hover cho hình ảnh */
     .product-main-image:hover img {
         transform: scale(1.05);
     }
 
-    /* Cột bên phải (Thông tin sản phẩm) */
+    /* Cột phải - Thông tin sản phẩm */
     .product-info {
         flex: 1;
         max-width: 600px;
@@ -54,7 +69,6 @@
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
 
-    /* Các kiểu dáng cho thông tin sản phẩm */
     .product-title {
         font-size: 2rem;
         font-weight: 600;
@@ -87,153 +101,50 @@
         margin-bottom: 10px;
     }
 
-    /* Nút thêm vào giỏ hàng */
-    .add-to-cart-button {
-        background-color: #000000;
-        color: white;
-        padding: 12px 24px;
-        border: none;
-        cursor: pointer;
-        font-size: 1.2rem;
-        border-radius: 5px;
-        transition: background-color 0.3s ease-in-out;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-        width: 100%;
-    }
-
-    .add-to-cart-button:hover {
-        background-color: #007bff;
-    }
-
-    .add-to-cart-form {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        /* Khoảng cách giữa số lượng và nút Add to Cart */
-    }
-
-    /* Cấu hình cho phần điều khiển số lượng */
+    /* Nút điều khiển số lượng */
     .quantity-control {
         display: flex;
         align-items: center;
-        justify-content: space-between;
         gap: 10px;
-        background-color: #f7f7f7;
-        padding: 5px 15px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        width: auto;
-        min-width: 200px;
-        /* Đảm bảo chiều rộng ổn định */
     }
 
-    /* Các nút giảm và tăng đều vuông */
     .quantity-button {
         font-size: 1.5rem;
         font-weight: bold;
         color: #333;
         background-color: #e0e0e0;
-        padding: 12px;
+        padding: 8px;
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease-in-out;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
         width: 40px;
         height: 40px;
-        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
-    /* Nút giảm và tăng khi hover */
     .quantity-button:hover {
         background-color: #007bff;
         color: white;
     }
 
-    /* Ô nhập số lượng */
     .input-quantity {
         text-align: center;
-        font-size: 1.6rem;
+        font-size: 1.2rem;
         width: 60px;
-        padding: 10px;
+        padding: 8px;
         border: 1px solid #ddd;
         border-radius: 5px;
         background-color: #fff;
-        margin: 0;
     }
 
-    /* Hiệu ứng khi focus vào ô nhập số */
     .input-quantity:focus {
         outline: none;
         border-color: #007bff;
     }
 
-    /* Wrapper chứa điều khiển số lượng và nút "Add to cart" */
-    .add-to-cart-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        justify-content: flex-start;
-    }
-
-    /* Điều chỉnh phần điều khiển số lượng */
-    .quantity-control {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        background-color: #f7f7f7;
-        padding: 5px 10px;
-        /* Điều chỉnh padding */
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        width: 150px;
-        /* Giới hạn chiều rộng */
-    }
-
-    /* Các nút giảm và tăng */
-    .quantity-button {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #333;
-        background-color: #e0e0e0;
-        padding: 8px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease-in-out;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-    }
-
-    /* Nút giảm và tăng khi hover */
-    .quantity-button:hover {
-        background-color: #007bff;
-        color: white;
-    }
-
-    /* Ô nhập số lượng */
-    .input-quantity {
-        text-align: center;
-        font-size: 1.2rem;
-        width: 40px;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background-color: #fff;
-        margin: 0;
-    }
-
-    /* Hiệu ứng khi focus vào ô nhập số */
-    .input-quantity:focus {
-        outline: none;
-        border-color: #007bff;
-    }
-
-    /* Nút Add to Cart */
+    /* Nút "Add to Cart" */
     .add-to-cart-button {
         background-color: #000000;
         color: white;
@@ -250,20 +161,7 @@
         background-color: #007bff;
     }
 
-
-    /* Các phần tử bổ sung */
-    .breadcrumb-navigation a {
-        font-size: 1.2rem;
-        color: #007bff;
-        text-decoration: none;
-    }
-
-    .breadcrumb-navigation a:hover {
-        text-decoration: underline;
-    }
-
-    /* Đảm bảo màn hình nhỏ responsive */
-    /* Phần điều chỉnh độ rộng của các phần tử trong giao diện */
+    /* Responsive */
     @media (max-width: 768px) {
         .product-detail-container {
             flex-direction: column;
@@ -275,14 +173,8 @@
             max-width: 100%;
         }
 
-        .add-to-cart-wrapper {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
         .quantity-control {
             min-width: 150px;
-            /* Điều chỉnh lại chiều rộng khi trên thiết bị nhỏ */
         }
     }
 </style>
@@ -332,15 +224,21 @@
 
             <!-- Điều chỉnh vị trí phần điều khiển số lượng và nút Add to cart -->
             <div class="add-to-cart-wrapper">
-                <form class="add-to-cart-form" action="https://websitedemos.net/electronic-store-04/product/air-conditioner-5000-btu-efficient-cooling-for-smaller-areas-like-bedrooms-and-guest-rooms/" method="post" enctype="multipart/form-data">
+                <form class="add-to-cart-form" action="cart.php" method="post">
+                    <!-- Input hidden để gửi thông tin sản phẩm -->
+                    <input type="hidden" name="product_id" value="1"> <!-- ID sản phẩm -->
+                    <input type="hidden" name="product_name" value="Air Conditioner 5000 BTU">
+                    <input type="hidden" name="product_price" value="139.00">
+                    
+                    <!-- Điều chỉnh số lượng -->
                     <div class="quantity-control">
                         <span class="quantity-button" id="decrease-quantity">-</span>
-                        <input type="number" id="quantity-input" class="input-quantity" name="quantity" value="1" aria-label="Product quantity" size="4" min="1" max="" step="1" inputmode="numeric" autocomplete="off">
+                        <input type="number" id="quantity-input" class="input-quantity" name="quantity" value="1" min="1" aria-label="Product quantity">
                         <span class="quantity-button" id="increase-quantity">+</span>
                     </div>
+                    <!-- Nút thêm vào giỏ hàng -->
+                    <button type="submit" name="add-to-cart" value="611" class="add-to-cart-button">Add to cart</button>
                 </form>
-                <!-- Nút thêm vào giỏ hàng -->
-                <button type="submit" name="add-to-cart" value="611" class="add-to-cart-button">Add to cart</button>
             </div>
 
             <div class="product-meta">
@@ -367,6 +265,25 @@
 
     document.getElementById('increase-quantity').addEventListener('click', function() {
         let quantityInput = document.getElementById('quantity-input');
+        let currentValue = parseInt(quantityInput.value);
+        quantityInput.value = currentValue + 1;
+    });
+</script>
+
+<script>
+    // JavaScript để tăng giảm số lượng
+    const decreaseButton = document.getElementById('decrease-quantity');
+    const increaseButton = document.getElementById('increase-quantity');
+    const quantityInput = document.getElementById('quantity-input');
+
+    decreaseButton.addEventListener('click', () => {
+        let currentValue = parseInt(quantityInput.value);
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+        }
+    });
+
+    increaseButton.addEventListener('click', () => {
         let currentValue = parseInt(quantityInput.value);
         quantityInput.value = currentValue + 1;
     });

@@ -1,3 +1,56 @@
+<?php
+session_start();
+
+// Kiểm tra yêu cầu AJAX
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['ajax'] === 'true') {
+    // Lấy thông tin từ POST
+    $product_id = $_POST['product_id'] ?? null;
+    $product_name = $_POST['product_name'] ?? null;
+    $product_price = $_POST['product_price'] ?? null;
+    $product_quantity = $_POST['quantity'] ?? 1;
+
+
+    // Kiểm tra các dữ liệu có hợp lệ không
+    if ($product_id && $product_name && $product_price) {
+        // Tạo thông tin sản phẩm
+        $product = [
+            'id' => $product_id,
+            'name' => $product_name,
+            'price' => $product_price,
+            'quantity' => $product_quantity
+            
+        ];
+
+        // Kiểm tra giỏ hàng
+        if (!isset($_SESSION['cart'])) {
+            $_SESSION['cart'] = [];
+        }
+
+        // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
+        $exists = false;
+        foreach ($_SESSION['cart'] as &$item) {
+            if ($item['id'] == $product_id) {
+                $item['quantity'] += $product_quantity; // Cộng dồn số lượng
+                $exists = true;
+                break;
+            }
+        }
+
+        // Nếu sản phẩm chưa tồn tại, thêm mới
+        if (!$exists) {
+            $_SESSION['cart'][] = $product;
+        }
+
+        // Trả về kết quả dưới dạng JSON cho AJAX
+        echo json_encode(['success' => true, 'message' => 'Product added to cart successfully']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Invalid product data']);
+    }
+
+    exit(); // Kết thúc script
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -175,42 +228,34 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><button class="remove-btn">X</button></td>
-                            <td>
-                                <div class="product-info">
-                                    <img src="product1.jpg" alt="Product 1" class="product-img">
-                                    <span>Air Conditioner 5000 BTU</span>
-                                </div>
-                            </td>
-                            <td class="price" data-price="1390000">1,390,000₫</td>
-                            <td>
-                                <div class="quantity-controls">
-                                    <button class="decrease">-</button>
-                                    <input type="number" value="2" class="quantity" min="1">
-                                    <button class="increase">+</button>
-                                </div>
-                            </td>
-                            <td class="subtotal">2,780,000₫</td>
-                        </tr>
-                        <tr>
-                            <td><button class="remove-btn">X</button></td>
-                            <td>
-                                <div class="product-info">
-                                    <img src="product2.jpg" alt="Product 2" class="product-img">
-                                    <span>Dual Hose Portable Air Conditioner</span>
-                                </div>
-                            </td>
-                            <td class="price" data-price="1490000">1,490,000₫</td>
-                            <td>
-                                <div class="quantity-controls">
-                                    <button class="decrease">-</button>
-                                    <input type="number" value="1" class="quantity" min="1">
-                                    <button class="increase">+</button>
-                                </div>
-                            </td>
-                            <td class="subtotal">1,490,000₫</td>
-                        </tr>
+                        <?php if (!empty($_SESSION['cart'])): ?>
+                            <?php foreach ($_SESSION['cart'] as $item): ?>
+                                <tr>
+                                    <td><button class="remove-btn">X</button></td>
+                                    <td>
+                                        <div class="product-info">
+                                            <img src="<?= $item['image'] ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="product-img">
+                                            <span><?= htmlspecialchars($item['name']) ?></span>
+                                        </div>
+                                    </td>
+                                    <td class="price" data-price="<?= $item['price'] ?>">
+                                        <?= number_format($item['price'], 2) ?> đ
+                                    </td>
+                                    <td>
+                                        <div class="quantity-controls">
+                                            <input type="number" value="<?= $item['quantity'] ?>" class="quantity" min="1">
+                                        </div>
+                                    </td>
+                                    <td class="subtotal">
+                                        <?= number_format($item['price'] * $item['quantity'], 2) ?>$
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="5">Your cart is empty!</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -218,10 +263,20 @@
             <!-- Thông tin tổng tiền -->
             <div class="cart-summary">
                 <h3>Cart totals</h3>
-                <p>Subtotal: <span id="subtotal">2,780,000₫</span></p>
-                <p>Total: <span id="total">2,780,000₫</span></p>
+                <?php
+                // Tính tổng phụ và tổng cộng từ session giỏ hàng
+                $subtotal = 0;
+                if (isset($_SESSION['cart']) && count($_SESSION['cart']) > 0) {
+                    foreach ($_SESSION['cart'] as $item) {
+                        $subtotal += $item['price'] * $item['quantity'];
+                    }
+                }
+                ?>
+                <p>Subtotal: <span id="subtotal"><?php echo number_format($subtotal, 0, ',', '.') . "₫"; ?></span></p>
+                <p>Total: <span id="total"><?php echo number_format($subtotal, 0, ',', '.') . "₫"; ?></span></p>
                 <button class="checkout-btn">Proceed to checkout</button>
             </div>
+
         </div>
     </div>
     <!-- footer  -->
@@ -229,6 +284,7 @@
     <!-- end footer  -->
     <script src="/public/script.js"></script>
 </body>
+
 </html>
 
 <script>
