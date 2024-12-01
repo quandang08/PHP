@@ -1,235 +1,88 @@
+<?php
+require_once "Product_Database.php";
+require_once "Category_Database.php";
+
+// Nhận `id` sản phẩm từ URL
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $product_id = intval($_GET['id']);
+} else {
+    die("Không tìm thấy sản phẩm.");
+}
+
+// Bước 2: Tạo đối tượng từ Product_Database và Category_Database
+$product_Database = new Product_Database();
+$category_Database = new Category_Database();
+
+// Bước 3: Truy vấn thông tin sản phẩm từ cơ sở dữ liệu
+$product = $product_Database->getProductById($product_id);
+if (!$product) {
+    die("Sản phẩm không tồn tại.");
+}
+// Bước 4: Truy vấn thông tin danh mục của sản phẩm
+$category = $category_Database->getCategoryById($product['category_id']);
+if (!$category) {
+    $category_name = "Danh mục không xác định"; // Nếu không tìm thấy danh mục
+} else {
+    $category_name = $category['name']; // Lấy tên danh mục
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/public/product_detail.css">
+    <link rel="stylesheet" href="public/css/product_detail.css">
     <title>Product Detail</title>
 </head>
 
-<style>
-    body {
-        font-family: Arial, sans-serif;
-    }
-
-    /* Ẩn các nút tăng giảm mặc định */
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
-    input[type="number"] {
-        -moz-appearance: textfield;
-    }
-
-    /* Container chính */
-    .product-detail-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 30px;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 30px;
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Cột trái - Hình ảnh */
-    .product-main-image {
-        flex: 1;
-        max-width: 600px;
-        overflow: hidden;
-        border-radius: 10px;
-    }
-
-    .product-main-image img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
-        transition: transform 0.3s ease-in-out;
-    }
-
-    .product-main-image:hover img {
-        transform: scale(1.05);
-    }
-
-    /* Cột phải - Thông tin sản phẩm */
-    .product-info {
-        flex: 1;
-        max-width: 600px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        padding: 20px;
-        background-color: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .product-title {
-        font-size: 2rem;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 10px;
-    }
-
-    .product-price {
-        font-size: 1.6rem;
-        color: #d9534f;
-        font-weight: bold;
-    }
-
-    .product-price .original-price {
-        text-decoration: line-through;
-        color: #777;
-    }
-
-    .product-short-description {
-        font-size: 1.2rem;
-        color: #555;
-    }
-
-    .product-short-description ul {
-        list-style-type: disc;
-        padding-left: 20px;
-    }
-
-    .product-short-description li {
-        margin-bottom: 10px;
-    }
-
-    /* Nút điều khiển số lượng */
-    .quantity-control {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .quantity-button {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #333;
-        background-color: #e0e0e0;
-        padding: 8px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease-in-out;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .quantity-button:hover {
-        background-color: #007bff;
-        color: white;
-    }
-
-    .input-quantity {
-        text-align: center;
-        font-size: 1.2rem;
-        width: 60px;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background-color: #fff;
-    }
-
-    .input-quantity:focus {
-        outline: none;
-        border-color: #007bff;
-    }
-
-    /* Nút "Add to Cart" */
-    .add-to-cart-button {
-        background-color: #000000;
-        color: white;
-        padding: 12px 24px;
-        border: none;
-        cursor: pointer;
-        font-size: 1.2rem;
-        border-radius: 5px;
-        transition: background-color 0.3s ease-in-out;
-        width: 100%;
-    }
-
-    .add-to-cart-button:hover {
-        background-color: #007bff;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .product-detail-container {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .product-main-image,
-        .product-info {
-            max-width: 100%;
-        }
-
-        .quantity-control {
-            min-width: 150px;
-        }
-    }
-</style>
+<!-- header  -->
+<?php include "header.php" ?>
+<!-- end header  -->
 
 <body>
-    <!-- header  -->
-    <?php include "header.php" ?>
-    <!-- end header  -->
-
     <div class="product-detail-container">
         <!-- Phần trái: Hình ảnh sản phẩm -->
         <div class="product-main-image">
-            <img src="https://websitedemos.net/electronic-store-04/wp-content/uploads/sites/1055/2022/03/electronic-store-product-image-9.jpg" alt="Product Image" width="600" height="600">
+            <!-- Hình ảnh của sản phẩm đã nhấp vào xem chi tiết -->
+            <img src="uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="Product Image" width="600" height="600">
         </div>
 
         <!-- Phần phải: Thông tin sản phẩm -->
         <div class="product-info">
+            <!-- Đường dẫn của sản phẩm đã nhấp vào xem -->
             <nav class="breadcrumb-navigation" aria-label="Breadcrumb">
-                <a href="https://websitedemos.net/electronic-store-04">Home</a>&nbsp;/&nbsp;
-                <a href="https://websitedemos.net/electronic-store-04/product-category/air-conditioner/">Air conditioner</a>&nbsp;/&nbsp;
-                Air Conditioner 5000 BTU, Efficient Cooling for Smaller Areas Like Bedrooms and Guest Rooms
+                <a href="index.php">Home</a>&nbsp;/&nbsp;
+                <a href="category.php?id=<?php echo htmlspecialchars($product['category_id']); ?>">
+                    <?php echo htmlspecialchars($category_name); ?>
+                </a>&nbsp;/&nbsp;
+                <?php echo htmlspecialchars($product['name']); ?>
             </nav>
-            <h1 class="product-title">Air Conditioner 5000 BTU, Efficient Cooling for Smaller Areas Like Bedrooms and Guest Rooms</h1>
+
+            <!-- Tên sản phẩm từ dữ liệu thực tế -->
+            <h1 class="product-title"><?php echo htmlspecialchars($product['name']); ?></h1>
+            <!-- Giá gốc sản phẩm -->
             <p class="product-price">
-                <del aria-hidden="true">
-                    <span class="original-price">
-                        <bdi><span class="currency-symbol">$</span>159.00</bdi>
-                    </span>
-                </del>
-                <ins aria-hidden="true">
-                    <span class="discounted-price">
-                        <bdi><span class="currency-symbol">$</span>139.00</bdi>
-                    </span>
-                </ins>
+                <span class="original-price">
+                    <bdi><span class="currency-symbol">$</span><?php echo number_format($product['price'], 2); ?></bdi>
+                </span>
             </p>
 
+            <!-- Nơi hiển thị mô tả từ sản phẩm thực tế "desc" -->
             <div class="product-short-description">
-                <p><strong>Key features</strong></p>
-                <ul>
-                    <li>Newest technology</li>
-                    <li>Best in class components</li>
-                    <li>Dimensions - 69.5 x 75.0 x 169.0</li>
-                    <li>Maintenance free</li>
-                    <li>12 years warranty</li>
-                </ul>
+                <p><?php echo nl2br(htmlspecialchars($product['desc'])); ?></p>
             </div>
 
             <!-- Điều chỉnh vị trí phần điều khiển số lượng và nút Add to cart -->
             <div class="add-to-cart-wrapper">
                 <form class="add-to-cart-form" action="cart.php" method="post">
                     <!-- Input hidden để gửi thông tin sản phẩm -->
-                    <input type="hidden" name="product_id" value="1"> <!-- ID sản phẩm -->
-                    <input type="hidden" name="product_name" value="Air Conditioner 5000 BTU">
-                    <input type="hidden" name="product_price" value="139.00">
-                    
+                    <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['id']); ?>">
+                    <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['name']); ?>">
+                    <input type="hidden" name="product_price" value="<?php echo htmlspecialchars($product['price']); ?>">
+
                     <!-- Điều chỉnh số lượng -->
                     <div class="quantity-control">
                         <span class="quantity-button" id="decrease-quantity">-</span>
@@ -237,21 +90,24 @@
                         <span class="quantity-button" id="increase-quantity">+</span>
                     </div>
                     <!-- Nút thêm vào giỏ hàng -->
-                    <button type="submit" name="add-to-cart" value="611" class="add-to-cart-button">Add to cart</button>
+                    <button type="submit" name="add-to-cart" value="<?php echo htmlspecialchars($product['id']); ?>" class="add-to-cart-button">Add to cart</button>
                 </form>
             </div>
 
             <div class="product-meta">
                 <span class="category-label">Category:
-                    <a href="https://websitedemos.net/electronic-store-04/product-category/air-conditioner/" rel="tag">Air conditioner</a>
+                    <a href="category.php?id=<?php echo htmlspecialchars($product['category_id']); ?>" rel="tag">
+                        <?php echo htmlspecialchars($category_name); ?>
+                    </a>
                 </span>
             </div>
         </div>
     </div>
-    <!-- footer  -->
-    <?php include "footer.php" ?>
-    <!-- end footer  -->
+
 </body>
+<!-- footer  -->
+<?php include "footer.php" ?>
+<!-- end footer  -->
 
 </html>
 <script>

@@ -1,3 +1,5 @@
+<!-- File danhsachsanpham.php  -->
+
 <?php
 require_once "Product_Database.php";
 require_once "Category_Database.php";
@@ -35,10 +37,11 @@ if (is_array($productsData) && count($productsData) > 0) {
 // Tính toán số trang
 $total_pages = ceil($total_products / $items_per_page);
 
+?>
+<?php
 // Include header
 include "header.php"
 ?>
-
 <div class="container mt-4">
     <?php if ($category_id): ?>
         <?php $category = $category_Database->getCategoryById($category_id); ?>
@@ -65,15 +68,16 @@ include "header.php"
                             <h5 class="card-title"><?= htmlspecialchars($product['name']); ?></h5>
                             <p class="card-text text-success fw-bold"><?= number_format((float)$product['price'], 0, ',', '.'); ?> VND</p>
                             <a href="product_detail.php?id=<?= $product['id']; ?>" class="btn btn-primary w-100 mb-2">Xem chi tiết</a>
+
                             <!-- Add to Cart Button -->
-                            <form action="add_to_cart.php" method="POST" class="d-inline" id="add-to-cart-form-<?= $product['id']; ?>">
+                            <form action="javascript:void(0);" method="POST" class="d-inline" id="add-to-cart-form-<?= $product['id']; ?>">
                                 <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
                                 <input type="hidden" name="quantity" value="1">
-                                <button type="button" class="btn add-to-cart-btn w-100"
-                                    onclick="addToCart(<?= $product['id']; ?>, '<?= htmlspecialchars($product['name']); ?>', <?= $product['price']; ?>)">
+                                <button type="button" class="btn add-to-cart-btn w-100" onclick="addToCart(<?= $product['id']; ?>)">
                                     <i class="bi bi-cart-plus me-2"></i> Add to Cart
                                 </button>
                             </form>
+
                         </div>
                     </div>
                 </div>
@@ -142,71 +146,78 @@ include "header.php"
         </ul>
     </nav>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Include footer -->
 <?php
-// Include footer
 include "footer.php";
 ?>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</html>
+
 <script>
-    function addToCart(productId, productName, productPrice) {
-        // Dữ liệu gửi đến server
+    function addToCart(productId) {
+        const quantity = document.querySelector(`#add-to-cart-form-${productId} input[name="quantity"]`).value || 1;
         const data = {
             product_id: productId,
-            product_name: productName,
-            product_price: productPrice,
-            quantity: 1, // Số lượng mặc định là 1
-            ajax: 'true' // Đánh dấu đây là yêu cầu AJAX
+            quantity: quantity,
+            ajax: 'true' // Thêm một biến ajax để server nhận diện yêu cầu AJAX
         };
 
-        // Gửi yêu cầu đến cart.php bằng AJAX
-        fetch('cart.php', {
+        // Gửi yêu cầu đến process_cart.php bằng AJAX
+        fetch('process_cart.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: new URLSearchParams(data) // Gửi dữ liệu dưới dạng URL encoded
+                body: new URLSearchParams(data)
             })
-            .then(response => response.json()) // Chuyển phản hồi thành JSON
+
+            .then(response => response.json()) // Phân tích phản hồi dưới dạng JSON
             .then(data => {
-                if (data.success) {
-                    // Hiển thị thông báo thành công với SweetAlert
-                    Swal.fire({
-                        title: 'Product Added!',
-                        text: 'Your product has been successfully added to the cart.',
-                        icon: 'success',
-                        confirmButtonText: 'Go to Cart'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = 'cart.php'; // Chuyển hướng đến giỏ hàng
-                        }
-                    });
+                console.log(data); // Log ra console để kiểm tra đối tượng JSON
+
+                if (data.success) { // Kiểm tra thuộc tính success trong phản hồi JSON
+                    alert('Product added to cart!');
+                    //updateCartDrawer(); // Cập nhật giỏ hàng hoặc UI nếu cần
                 } else {
-                    // Hiển thị thông báo lỗi
-                    alert(data.message);
+                    alert('There was an error adding the product to your cart.');
                 }
             })
+
             .catch(error => {
                 console.error('Error:', error);
-                alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.');
+                alert('Something went wrong!');
             });
     }
-</script>
-<script>
-    // Lấy các phần tử
+
+    // Hàm cập nhật nội dung Cart Drawer
+    function updateCartDrawer() {
+        fetch('cart.php?ajax=true')
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector('.cart-drawer-content').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error updating cart drawer:', error);
+                alert('Không thể cập nhật giỏ hàng. Vui lòng thử lại!');
+            });
+    }
+
+    // Xử lý mở và đóng Cart Drawer
     const cartDrawer = document.getElementById('cart-drawer');
     const closeBtn = document.querySelector('.cart-drawer-close');
     const openCartDrawerBtn = document.querySelector('#open-cart-drawer'); // Nút mở cart drawer
 
-    // Hàm mở Cart Drawer
-    openCartDrawerBtn.addEventListener('click', () => {
-        cartDrawer.classList.add('active'); // Thêm class active để hiển thị
-    });
+    if (openCartDrawerBtn) {
+        openCartDrawerBtn.addEventListener('click', () => {
+            cartDrawer.classList.add('active'); // Thêm class active để hiển thị
+        });
+    }
 
-    // Hàm đóng Cart Drawer
-    closeBtn.addEventListener('click', () => {
-        cartDrawer.classList.remove('active'); // Xóa class active để ẩn đi
-    });
-
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            cartDrawer.classList.remove('active'); // Xóa class active để ẩn đi
+        });
+    }
 </script>
-
-</html>

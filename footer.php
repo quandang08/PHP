@@ -50,27 +50,9 @@
 </footer>
 </div>
 </body>
-<script src="/public/script.js"></script>
+<script src="public/js/script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-    // Lấy các phần tử
-    const cartDrawer = document.getElementById('cart-drawer');
-    const closeBtn = document.querySelector('.cart-drawer-close');
-    const openCartDrawerBtn = document.querySelector('#open-cart-drawer'); // Nút mở cart drawer
-
-    // Hàm mở Cart Drawer
-    openCartDrawerBtn.addEventListener('click', (event) => {
-        event.preventDefault(); // Ngừng hành động mặc định của thẻ <a>
-        cartDrawer.classList.add('active'); // Thêm class active để hiển thị
-    });
-
-    // Hàm đóng Cart Drawer
-    closeBtn.addEventListener('click', () => {
-        cartDrawer.classList.remove('active'); // Xóa class active để ẩn đi
-    });
-</script>
 
 </html>
 <!-- end footer  -->

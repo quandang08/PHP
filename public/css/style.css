@@ -11,6 +11,32 @@ body {
     background-color: #f8f9fa;
 }
 
+body,
+html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.product-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+section.above-header {
+    background-color: #0769DA !important;
+    color: #fff;
+}
+
+.below-header {
+    background-color: #0572ED !important;
+}
+
+ul.nav .nav-item .nav-link {
+    color: white;
+}
+
 .navbar {
     margin-bottom: 1rem;
 }
@@ -70,31 +96,24 @@ section.above-header {
     padding: 20px 0;
 }
 
-/* Tùy chỉnh icon và khoảng cách */
+
 .bi {
     font-size: 1.3rem;
-    /* Đặt kích thước icon cho đẹp */
 }
 
-/* Chỉnh sửa độ rộng của các phần tử */
 .text-end {
     text-align: right;
 }
 
-/* Thêm hiệu ứng hover cho các liên kết */
 a:hover {
     text-decoration: none;
-    /* Loại bỏ gạch chân khi hover */
     color: #ffcc00;
-    /* Thêm màu sắc khi hover */
 }
 
-/* Đảm bảo chữ "Cart" và "Log In" chỉ hiển thị trên màn hình lớn */
 .d-none.d-sm-inline {
     display: inline-block;
 }
 
-/* Khi ở màn hình nhỏ hơn, chỉ hiển thị icon */
 @media (max-width: 576px) {
     .d-none.d-sm-inline {
         display: none;
@@ -128,7 +147,6 @@ a:hover {
     font-size: 18px;
 }
 
-/* Custom Footer Styling */
 .custom-footer {
     background-color: #f8f9fa;
     padding: 40px 0;
@@ -226,7 +244,7 @@ a:hover {
     margin-top: 10px;
 }
 
-    /* General styles for Cart Drawer */
+/* General styles for Cart Drawer */
 .cart-drawer {
     font-family: "Roboto", serif;
     position: fixed;

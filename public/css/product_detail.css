@@ -72,7 +72,6 @@ input[type="number"] {
 }
 
 .product-price .original-price {
-    text-decoration: line-through;
     color: #777;
 }
 
