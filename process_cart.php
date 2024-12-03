@@ -1,5 +1,9 @@
+<!-- File process_cart.php  -->
 <?php
 session_start();
+require_once "Product_Database.php";
+
+$product_Database = new Product_Database();
 
 // Khởi tạo giỏ hàng nếu chưa có
 if (!isset($_SESSION['cart'])) {
@@ -13,21 +17,34 @@ if (isset($_POST['ajax']) && $_POST['ajax'] === 'true') {
         $product_id = intval($_POST['product_id']);
         $quantity = intval($_POST['quantity']);
 
-        // Dữ liệu sản phẩm giả định (nên lấy từ cơ sở dữ liệu thực tế)
-        $product_data = [
-            'name' => "Product $product_id",
-            'price' => 100, // Giá giả định
-            'image' => 'https://via.placeholder.com/100' // Hình ảnh giả định
-        ];
+        // Lấy dữ liệu sản phẩm từ cơ sở dữ liệu
+        $product_data = $product_Database->getProductById($product_id);
 
-        // Thêm sản phẩm vào giỏ hàng
-        add_to_cart($product_id, $product_data, $quantity);
+        // Kiểm tra xem sản phẩm có tồn tại hay không
+        if ($product_data) {
+            //Đường dẫn tương đối
+            $product_data['image'] = 'uploads/' . $product_data['image'];
 
-        // Trả về phản hồi dưới dạng JSON cho AJAX
-        echo json_encode([
-            'success' => true,
-            'message' => 'Product added to cart successfully!'
-        ]);
+            // Thêm sản phẩm vào giỏ hàng
+            add_to_cart($product_id, [
+                'name' => $product_data['name'],
+                'price' => $product_data['price'],
+                'image' => $product_data['image']
+            ], $quantity);
+
+            // Trả về phản hồi dưới dạng JSON cho AJAX
+            echo json_encode([
+                'success' => true,
+                'message' => 'Product added to cart successfully!',
+                'cart' => $_SESSION['cart'] // Tùy chọn: gửi lại dữ liệu giỏ hàng
+            ]);
+        } else {
+            // Sản phẩm không tồn tại
+            echo json_encode([
+                'success' => false,
+                'message' => 'Product not found!'
+            ]);
+        }
         exit();
     }
     // Xử lý hành động xóa sản phẩm
@@ -35,7 +52,7 @@ if (isset($_POST['ajax']) && $_POST['ajax'] === 'true') {
         $product_id = intval($_POST['product_id']);
 
         // Xóa sản phẩm khỏi giỏ hàng
-        $_SESSION['cart'] = array_filter($_SESSION['cart'], function($item) use ($product_id) {
+        $_SESSION['cart'] = array_filter($_SESSION['cart'], function ($item) use ($product_id) {
             return $item['id'] !== $product_id;
         });
 
@@ -45,55 +62,18 @@ if (isset($_POST['ajax']) && $_POST['ajax'] === 'true') {
         // Trả về phản hồi dưới dạng JSON cho AJAX
         echo json_encode([
             'success' => true,
-            'message' => 'Product removed successfully!'
+            'message' => 'Product removed successfully!',
+            'cart' => $_SESSION['cart']
         ]);
         exit();
-    }
-} else {
-    // Nếu yêu cầu không phải từ AJAX, xử lý theo cách thông thường
-    if (isset($_POST['action'])) {
-        if ($_POST['action'] === 'add' && isset($_POST['product_id']) && isset($_POST['quantity'])) {
-            $product_id = intval($_POST['product_id']);
-            $quantity = intval($_POST['quantity']);
-
-            // Dữ liệu sản phẩm giả định (nên lấy từ cơ sở dữ liệu thực tế)
-            $product_data = [
-                'name' => "Product $product_id",
-                'price' => 100, // Giá giả định
-                'image' => 'https://via.placeholder.com/100' // Hình ảnh giả định
-            ];
-
-            // Thêm sản phẩm vào giỏ hàng
-            add_to_cart($product_id, $product_data, $quantity);
-
-            // Trả về thông báo thành công (nếu cần cho trang thông thường)
-            echo "Product added to cart successfully!";
-            header('Location: cart.php');
-            exit();
-        } elseif ($_POST['action'] === 'remove' && isset($_POST['product_id'])) {
-            // Xóa sản phẩm khỏi giỏ hàng
-            $product_id = intval($_POST['product_id']);
-
-            // Xóa sản phẩm khỏi giỏ hàng
-            $_SESSION['cart'] = array_filter($_SESSION['cart'], function($item) use ($product_id) {
-                return $item['id'] !== $product_id;
-            });
-
-            // Đảm bảo giỏ hàng không có các phần tử null sau khi xóa
-            $_SESSION['cart'] = array_values($_SESSION['cart']);
-
-            // Trả về thông báo cho trang thông thường
-            echo "Product removed successfully!";
-            header('Location: cart.php');
-            exit();
-        }
     }
 }
 
 /**
  * Hàm thêm sản phẩm vào giỏ hàng
  */
-function add_to_cart($product_id, $product_data, $quantity) {
+function add_to_cart($product_id, $product_data, $quantity)
+{
     $found = false;
 
     foreach ($_SESSION['cart'] as &$item) {

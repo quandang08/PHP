@@ -1,3 +1,5 @@
+<!-- File Category_Database.php  -->
+
 <?php
 require_once 'Database.php';
 
@@ -57,7 +59,7 @@ class Category_Database
 }
 
 // **************** Note ******************
-// Phương thức đã đóng comment - Lấy tất cả danh mục
+//Lấy tất cả danh mục
     /*
     public function getAllCategories()
     {
@@ -66,7 +68,7 @@ class Category_Database
     }
     */
 
-    // Phương thức đã đóng comment - Lấy danh mục theo ID
+    //Lấy danh mục theo ID
     /*
     public function getCategoryById($id)
     {
@@ -77,7 +79,7 @@ class Category_Database
     }
     */
 
-    // Phương thức đã đóng comment - Xóa danh mục
+    //Xóa danh mục
     /*
     public function deleteCategory($id)
     {

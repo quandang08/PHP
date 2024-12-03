@@ -1,3 +1,4 @@
+<!-- File edit_product.php  -->
 <?php
 require_once 'Product_Database.php';
 require_once 'Category_Database.php'; // Thêm để lấy danh mục

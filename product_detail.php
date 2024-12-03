@@ -1,3 +1,4 @@
+<!-- File product_detail.php  -->
 <?php
 require_once "Product_Database.php";
 require_once "Category_Database.php";
@@ -25,7 +26,6 @@ if (!$category) {
 } else {
     $category_name = $category['name']; // Lấy tên danh mục
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -111,6 +111,7 @@ if (!$category) {
 
 </html>
 <script>
+    //Điều chỉnh số lượng trong input khi nhấn button + , -
     document.getElementById('decrease-quantity').addEventListener('click', function() {
         let quantityInput = document.getElementById('quantity-input');
         let currentValue = parseInt(quantityInput.value);

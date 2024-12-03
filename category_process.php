@@ -1,3 +1,4 @@
+<!-- File category_process.php  -->
 <?php
 require_once 'Category_Database.php';
 
@@ -31,7 +32,7 @@ if ($action == "delete") {
         }
     }
     }elseif($action == "edit"){
-        //Chinh sua danh muc
+        //Chỉnhh sửa danh mục
         if(isset($_POST["id"]) && isset($_POST["name"])){
             $id = $_POST["id"];
             $name = $_POST["name"];

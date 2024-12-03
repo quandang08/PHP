@@ -1,3 +1,4 @@
+<!-- File result.php  -->
 <?php
 require_once 'Product_Database.php';
 
@@ -8,7 +9,7 @@ if (!isset($_GET['keyword'])) {
 
 $keyword = $_GET['keyword'];
 $product_database = new Product_Database();
-$products = $product_database->searchProducts($keyword);
+// $products = $product_database->searchProducts($keyword);
 ?>
 
 <!DOCTYPE html>

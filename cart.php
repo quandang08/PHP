@@ -43,13 +43,13 @@ session_start();
                                         </div>
                                     </td>
                                     <td class="price" data-price="<?= $item['price'] ?>">
-                                        <?= number_format($item['price'], 2) ?>₫
+                                        <?= number_format($item['price'], 3) ?>₫
                                     </td>
                                     <td>
                                         <input type="number" class="quantity" value="<?= $item['quantity'] ?>" min="1" data-id="<?= $item['id'] ?>">
                                     </td>
                                     <td class="subtotal">
-                                        <?= number_format($item['price'] * $item['quantity'], 2) ?>₫
+                                        <?= number_format($item['price'] * $item['quantity'], 3) ?>₫
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -72,8 +72,8 @@ session_start();
                     }
                 }
                 ?>
-                <p>Subtotal: <span id="subtotal"><?= number_format($subtotal, 0, ',', '.') ?>₫</span></p>
-                <p>Total: <span id="total"><?= number_format($subtotal, 0, ',', '.') ?>₫</span></p>
+                <p>Subtotal: <span id="subtotal"><?= number_format($subtotal, 3, ',', '.') ?>₫</span></p>
+                <p>Total: <span id="total"><?= number_format($subtotal, 3, ',', '.') ?>₫</span></p>
                 <button class="checkout-btn">Proceed to checkout</button>
             </div>
         </div>

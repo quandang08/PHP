@@ -18,23 +18,20 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Chiều cao màn hình */
-            background-color: #f8f9fa; /* Màu nền nhẹ */
+            min-height: 100vh; 
+            background-color: #f8f9fa; 
         }
-
         .form-container {
-            background-color: #ffffff; /* Màu nền trắng */
-            padding: 2rem; /* Khoảng cách nội dung */
-            border-radius: 10px; /* Bo góc */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Đổ bóng */
-            max-width: 400px; /* Chiều rộng tối đa */
-            width: 100%; /* Chiều rộng chiếm 100% trong khung */
+            background-color: #ffffff; 
+            padding: 2rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+            max-width: 400px; 
+            width: 100%; 
         }
-
         .nav-pills .nav-link {
             font-weight: bold;
         }
-
         .text-center a {
             text-decoration: none;
         }
@@ -42,7 +39,6 @@
 </head>
 
 <body>
-    <!-- Trung tâm màn hình -->
     <div class="center-container">
         <div class="form-container">
             <!-- Pills navs -->

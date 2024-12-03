@@ -1,3 +1,4 @@
+<!-- File Product_Database.php  -->
 <?php
 require_once 'Database.php';
 

@@ -1,3 +1,4 @@
+<!-- File product_crud.php  -->
 <?php
 session_start(); // Bắt đầu session để lấy thông báo
 

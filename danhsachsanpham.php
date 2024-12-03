@@ -26,7 +26,7 @@ $offset = ($page - 1) * $items_per_page;
 $productsData = $product_Database->getProducts($category_id, $keyword, $offset, $items_per_page);
 $total_products = $product_Database->getTotalProductsCount($category_id, $keyword);
 
-// Kiểm tra xem $productsData có phải là mảng không và có dữ liệu không
+// Kiểm tra xem $productsData có phải là mảng không và có dữ liệu không?
 if (is_array($productsData) && count($productsData) > 0) {
     $products = $productsData; // Lấy danh sách sản phẩm
 } else {
@@ -50,6 +50,7 @@ include "header.php"
         <?php else: ?>
             <h2 class="mb-4 text-danger">Danh mục không tồn tại.</h2>
         <?php endif; ?>
+        
     <?php elseif ($keyword): ?>
         <h2 class="mb-4">Kết quả tìm kiếm cho: <span class="text-primary">"<?= htmlspecialchars($keyword); ?>"</span></h2>
     <?php else: ?>
@@ -161,7 +162,7 @@ include "footer.php";
         const data = {
             product_id: productId,
             quantity: quantity,
-            ajax: 'true' // Thêm một biến ajax để server nhận diện yêu cầu AJAX
+            ajax: 'true' 
         };
 
         // Gửi yêu cầu đến process_cart.php bằng AJAX
@@ -179,7 +180,7 @@ include "footer.php";
 
                 if (data.success) { // Kiểm tra thuộc tính success trong phản hồi JSON
                     alert('Product added to cart!');
-                    //updateCartDrawer(); // Cập nhật giỏ hàng hoặc UI nếu cần
+                    //updateCartDrawer(); 
                 } else {
                     alert('There was an error adding the product to your cart.');
                 }

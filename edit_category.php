@@ -1,3 +1,4 @@
+<!-- File edit_category.php  -->
 <?php
 require_once 'Category_Database.php';
 
